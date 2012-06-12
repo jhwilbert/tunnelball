@@ -22,7 +22,6 @@ var group = new Group;
 /* Ball */
 var BounceBall = Base.extend({
 	initialize: function(point,vector){
-		console.debug("initialize", vector);
 		if (!vector || vector.isZero()){
 			this.vector = Point.random() * 5;
 		} else {
@@ -41,7 +40,8 @@ var BounceBall = Base.extend({
 		var ball = new Path.Circle(this.point, this.radius);
 		ball.fillColor = 'blue';
 		this.item = new Group([ball]);
-	},
+
+	}, // end of createshape
 	iterate: function() {
 		var size = view.size;
 		this.vector.x *= 0.99;
@@ -56,18 +56,45 @@ var BounceBall = Base.extend({
         if (pre.y < this.radius || pre.y > size.height - this.radius) {
             this.vector.y *= this.bounce;
         }
-		
+        
         var max = Point.max(this.radius, this.point + this.vector);
 		this.item.position = this.point = Point.min(max, size - this.radius);
-
+		
+		//console.debug("door",door.y);
+		
 	} // end of iterate
 
 });
+createDoor();
+
+function createDoor() {
+	var pos = ["T","R"];
+	randomPos = pos[Math.floor(Math.random()*pos.length)];
+	console.debug(randomPos);
+ 	console.debug(canvas.width);		
+	
+	switch(randomPos) {
+		case "T":
+	    	door = new Door(Math.floor(Math.random()*canvas.width-DOOR_SIZE),0);
+			break;
+		case "R":
+			door = new Door(0,Math.floor(Math.random()*canvas.height-DOOR_SIZE));
+			break;
+/*		case "B":
+			door = new Door(Math.floor(Math.random()*canvas.width-DOOR_SIZE), canvas.height - DOOR_SIZE);
+			break;
+*/
+
+	}
+
+}
 
 function onFrame() {
 	ball.iterate();
 }
 
 
+
+
 ball = new BounceBall(Point.random(), Point.random());
-door = new Door(0,500);
+//door = new Door(50,500);
