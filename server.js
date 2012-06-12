@@ -19,29 +19,43 @@ var num_client = 0;
 var client_isLast = false;
 var client_isFirst = false;
 
+var clients = [];
+
 io.sockets.on('connection', function (socket) {
 
-	// Detects connection and updates other clients
-	num_client++;
-	console.log("Client Connected");
 	
-	// Send to other clients
-	socket.emit('handshake', { client_id : num_client });
-	socket.broadcast.emit('update', { last_client : num_client });
-	
-	console.log("num_clients", num_client);
+	// Detects Connection
+	clients.push(socket.id);
+	socket.emit('handshake', { client_id : returnIndex(socket.id, clients), total_clients : clients.length });
+	socket.broadcast.emit('update', { total_clients : clients.length });
 	
 	// Detects disconnection
-	socket.on('disconnect', function(data) {
-		num_client--;
-		console.log("Client Disconnected");
-		socket.emit('update', { num_client : num_client });
-		
-		/* Logging */
-		console.log("num_clients", num_client);
-		console.log("num_clients", num_client);
-		
+	socket.on('disconnect', function() {
+		removeElement(socket.id, clients);
 	});
+
+	// Logging
+	console.log(clients);
 
 
 });
+
+
+/*
+HELPERS
+*/
+function removeElement(element,arr) {
+	for (var i = 0; i< arr.length; i++) {
+		if(element == arr[i]){
+			arr.splice(i,1);
+		}
+	}
+}
+
+function returnIndex(element,arr) {
+	for (var i = 0; i < arr.length; i++) {
+		if(element == arr[i]) {
+			return i;
+		}
+	}
+}
