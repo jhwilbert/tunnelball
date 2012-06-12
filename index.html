@@ -1,30 +1,18 @@
-
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
 
-	<meta http-equiv=Content-Type content="text/html; charset=UTF-8"/>
+<head>
 	<title>Move the Ball</title>
-	<meta name=viewport content="width=device-width,user-scalable=no"/>
-	<script src="http://debug.phonegap.com/target/target-script-min.js#accelerometer"></script>
+	<link rel="stylesheet" type="text/css" href="css/styles.css">
+	
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="js/scripts.js"></script>	
+	<script type="text/javascript" src="js/paper.js" ></script>
+	<script type="text/paperscript" src="js/paper_script.js" canvas="stage"></script>
 
 </head>
-
-<body>
-	<div id="content">
-		<h1>Move the Ball</h1>
-		<div id="yes">
-			Move Ball
-			<div id="ball"></div>
-		</div>
-
-		<div id="no">
-			Browser doesn't support.
-		</div>
 	
-	</div>
+<body>
+	<canvas id="stage" width='500px' height='800px' ></canvas>
 
 </body>
 </html>

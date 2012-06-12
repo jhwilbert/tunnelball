@@ -22,7 +22,6 @@ var client_isFirst = false;
 var clients = [];
 
 io.sockets.on('connection', function (socket) {
-
 	
 	// Detects Connection
 	clients.push(socket.id);
@@ -37,13 +36,10 @@ io.sockets.on('connection', function (socket) {
 	// Logging
 	console.log(clients);
 
-
 });
 
 
-/*
-HELPERS
-*/
+/* HELPERS */
 function removeElement(element,arr) {
 	for (var i = 0; i< arr.length; i++) {
 		if(element == arr[i]){
@@ -51,7 +47,6 @@ function removeElement(element,arr) {
 		}
 	}
 }
-
 function returnIndex(element,arr) {
 	for (var i = 0; i < arr.length; i++) {
 		if(element == arr[i]) {

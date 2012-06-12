@@ -2,6 +2,10 @@ var socket = io.connect('http://joaowilbert.local:8000');
 var my_id;
 var last_client;
 
+/******************************************************************************/
+/* Socket Controller
+/*****************************************************************************/
+
 socket.on('handshake', function(data) {
 	my_id = data["client_id"];
 	total_clients = data["total_clients"]
@@ -28,4 +32,16 @@ function updateStatus() {
 	console.debug("my id", my_id) 
 	console.debug("total clients",total_clients);
 
+}
+
+
+/******************************************************************************/
+/* Helpers
+/*****************************************************************************/
+
+function getBoundaries() {
+	screenH = screen.height;
+	screenW = screen.width;
+	arr = [screenH,screenW];
+	return arr
 }
