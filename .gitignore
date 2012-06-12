@@ -1,2 +1,3 @@
+*.swp
 .nodester.appconfig
 node_modules/
