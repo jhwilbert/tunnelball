@@ -7,10 +7,11 @@ app.listen(process.env['app_port'] || 3000);
 
 app.use("/js", express.static(__dirname + '/js'));
 app.use("/css", express.static(__dirname + '/css'));
-app.use("/imgs", express.static(__dirna,e + '/imgs'));
+app.use("/imgs", express.static(__dirname + '/imgs'));
 
 
 app.get('/', function (req, res) {
 	res.sendfile(__dirname + '/index.html');
 });
+
 
