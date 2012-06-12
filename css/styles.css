@@ -4,6 +4,21 @@ body {
     margin:0;
 }
 
+
+#no{
+	display:none
+}
+#ball{
+	width:20px;
+	height:20px;
+	border-radius:10px;
+	-webkit-radius:10px;
+	background-color:red;
+	position:absolute;
+	top:0px;
+	left:0px
+}
+
 #swipable {
     position:absolute;
     width:800px;
