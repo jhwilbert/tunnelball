@@ -14,4 +14,12 @@ app.get('/', function (req, res) {
 	res.sendfile(__dirname + '/index.html');
 });
 
+var num_clients = 0;
+var client_isLast = false;
+var client_isFirst = false;
 
+io.sockets.on('connection', function (socket) {
+	num_clients = num_clients + 1;
+	socket.emit('handshake', { hello : socket.id });
+	console.log(num_clients);
+});
