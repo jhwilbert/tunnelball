@@ -25,9 +25,9 @@ deviceMotion = [];
 var BounceBall = Base.extend({
 
 	initialize: function() {
-		this.point = new Point(0,0);
-		this.vpoint = new Point(0,0);
-		this.apoint = new Point(0,0);
+		this.point = new Point(canvas.width/2,canvas.height/2);  // position
+		this.vpoint = new Point(0,0); // velocity
+		this.apoint = new Point(0,0); // acceleration
 		
  		this.gravity = 0.1;
 		this.bounce = -0.3;
@@ -36,8 +36,8 @@ var BounceBall = Base.extend({
 
 		this.createShape();
 		group.addChild(this.item);
-
 	}, // end of initialize
+
 	getDeviceMotion: function() {
 		if(window.DeviceMotionEvent != undefined) {
 			window.ondevicemotion = function(event) {
@@ -46,45 +46,63 @@ var BounceBall = Base.extend({
 				deviceMotion[0] = ax;
 				deviceMotion[1] = ay;
 			}
-		}
-		
+		}	
 		return deviceMotion;
-	},
+	}, // end of device motion
+
     createShape: function() {
 		var ball = new Path.Circle(this.point, this.radius);
 		ball.fillColor = 'blue';
 		this.item = new Group([ball]);
-
 	}, // end of createshape
+	
+	checkBounds: function() {
+		
+		if (this.item.position.x < this.radius) { // top
+			this.item.position.x = 0 + this.radius;
+			this.vpoint.x = - this.vpoint.x;
+		}
+		if (this.item.position.y < this.radius) {
+			this.item.position.y = 0 + this.radius;
+			this.vpoint.y = - this.vpoint.y;
+		} 
+		if (this.item.position.x > canvas.width - this.radius) {
+			this.item.position.x = canvas.width - this.radius;
+			this.vpoint.x = - this.vpoint.x;
+		}
+		if (this.item.position.y > canvas.height - this.radius) {
+			this.vpoint.y = - this.vpoint.y;
+		}
+	},
 	iterate: function() {
-		//console.debug(this.getDeviceMotion());
+
 		// Check Orientation
-		var portrait = window.innerWidth / window.innerHeight > 1;
+		var landscape = window.innerWidth / window.innerHeight > 1;
 		document.getElementById("ax").innerHTML = this.getDeviceMotion()[0];
 		document.getElementById("ay").innerHTML = this.getDeviceMotion()[1];
-		document.getElementById("orient").innerHTML = portrait;
-		/*
-		if(portrait) {
-			this.vpoint.y += this.gravity;
-			this.item.position.y += this.vpoint.y; 		
-			this.item.position.x = this.vpoint.x;
-			this.vpoint.y *= this.friction;
-			this.vpoint.x *= this.friction;
+		document.getElementById("orient").innerHTML = landscape;
 		
+		this.apoint.x = this.getDeviceMotion()[0];
+		this.apoint.y = this.getDeviceMotion()[1];		
+
+		if(landscape) {
+			this.vpoint = this.vpoint + new Point(this.getDeviceMotion()[0], this.getDeviceMotion()[1]);
+		} else {
+			this.vpoint.y = this.vpoint.y - this.getDeviceMotion()[1];
+			this.vpoint.x = this.vpoint.x + this.getDeviceMotion()[0];
 		}
-	
-		if(this.item.position.y < 0) {
-			this.item.position.y = 0;
-			
-		} else if (this.item.position.y > canvas.height) {
-			this.item.position.y = canvas.height;
-			this.vpoint.y *= this.bounce; 
-		} 
-		*/
-
-
+		
+		this.vpoint.x = this.vpoint.x * 0.98;
+		this.vpoint.y = this.vpoint.y * 0.98;
+		
+		this.item.position.y = this.item.position.y + this.vpoint.y / 50;
+		this.item.position.x = this.item.position.x + this.vpoint.x / 50;	
+		
+		console.debug("position y:",this.item.position.y);
+		console.debug("position x:",this.item.position.x);
+		
+		this.checkBounds();
 	} // end of iterate
-
 });
 
 function createDoor() {
