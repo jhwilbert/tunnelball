@@ -3,6 +3,9 @@
 /*****************************************************************************/
 
 var canvas = document.getElementById('stage');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
 paper.setup(canvas);
 
 DOOR_SIZE = 100;
@@ -78,9 +81,9 @@ var BounceBall = Base.extend({
 
 		// Check Orientation
 		var landscape = window.innerWidth / window.innerHeight > 1;
-		document.getElementById("ax").innerHTML = this.getDeviceMotion()[0];
-		document.getElementById("ay").innerHTML = this.getDeviceMotion()[1];
-		document.getElementById("orient").innerHTML = landscape;
+		//document.getElementById("ax").innerHTML = this.getDeviceMotion()[0];
+		//document.getElementById("ay").innerHTML = this.getDeviceMotion()[1];
+		//document.getElementById("orient").innerHTML = landscape;
 		
 		this.apoint.x = this.getDeviceMotion()[0];
 		this.apoint.y = this.getDeviceMotion()[1];		
@@ -88,8 +91,7 @@ var BounceBall = Base.extend({
 		if(landscape) {
 			this.vpoint = this.vpoint + new Point(this.getDeviceMotion()[0], this.getDeviceMotion()[1]);
 		} else {
-			this.vpoint.y = this.vpoint.y - this.getDeviceMotion()[1];
-			this.vpoint.x = this.vpoint.x + this.getDeviceMotion()[0];
+			this.vpoint = this.vpoint + new Point(this.getDeviceMotion()[0], this.getDeviceMotion()[1]);
 		}
 		
 		this.vpoint.x = this.vpoint.x * 0.98;
