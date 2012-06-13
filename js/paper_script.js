@@ -18,13 +18,17 @@ function Door(x,y) {
 }
 
 var group = new Group;
+var ax,ay;
 
+deviceMotion = [];
 /* Ball */
 var BounceBall = Base.extend({
-	initialize: function() {
-		this.point = new Point(canvas.width/2, canvas.height/2);
-		this.vpoint = new Point(0,0);
 
+	initialize: function() {
+		this.point = new Point(0,0);
+		this.vpoint = new Point(0,0);
+		this.apoint = new Point(0,0);
+		
  		this.gravity = 0.1;
 		this.bounce = -0.3;
 		this.radius = 30;
@@ -34,6 +38,18 @@ var BounceBall = Base.extend({
 		group.addChild(this.item);
 
 	}, // end of initialize
+	getDeviceMotion: function() {
+		if(window.DeviceMotionEvent != undefined) {
+			window.ondevicemotion = function(event) {
+				ax = event.accelerationIncludingGravity.x * 5;
+				ay = event.accelerationIncludingGravity.y * 5;
+				deviceMotion[0] = ax;
+				deviceMotion[1] = ay;
+			}
+		}
+		
+		return deviceMotion;
+	},
     createShape: function() {
 		var ball = new Path.Circle(this.point, this.radius);
 		ball.fillColor = 'blue';
@@ -41,11 +57,13 @@ var BounceBall = Base.extend({
 
 	}, // end of createshape
 	iterate: function() {
-
+		//console.debug(this.getDeviceMotion());
 		// Check Orientation
 		var portrait = window.innerWidth / window.innerHeight > 1;
-		console.debug(portrait);
-		
+		document.getElementById("ax").innerHTML = this.getDeviceMotion()[0];
+		document.getElementById("ay").innerHTML = this.getDeviceMotion()[1];
+		document.getElementById("orient").innerHTML = portrait;
+		/*
 		if(portrait) {
 			this.vpoint.y += this.gravity;
 			this.item.position.y += this.vpoint.y; 		
@@ -62,6 +80,7 @@ var BounceBall = Base.extend({
 			this.item.position.y = canvas.height;
 			this.vpoint.y *= this.bounce; 
 		} 
+		*/
 
 
 	} // end of iterate
