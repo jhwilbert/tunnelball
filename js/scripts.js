@@ -20,13 +20,14 @@ socket.on('update', function(data) {
 
 function updateStatus() {
 	if(my_id == 0 &&  total_clients == 1) {
-		//console.debug("I AM THE ONLY ONE");
+		console.debug("I AM THE ONLY ONE");
 	} else if (my_id == 0 && total_clients > 1) {
-		//console.debug("I AM THE FIRST ONE");
+		console.debug("I AM THE FIRST ONE");
+		door = new RandomDoor();
 	} else if (my_id  == total_clients - 1) {
-		//console.debug("I AM THE LAST  ONE");
+		console.debug("I AM THE LAST  ONE");
 	} else if (my_id > 0 && my_id < total_clients - 1 ) {
-		//console.debug("I AM THE MIDDLE");	
+		console.debug("I AM THE MIDDLE");	
 	} 
 	
 	//console.debug("my id", my_id) 

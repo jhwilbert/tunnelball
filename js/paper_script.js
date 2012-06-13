@@ -1,32 +1,21 @@
 /******************************************************************************/
-/* Graphical Elements
+/* Graphical Elements : paper.js
 /*****************************************************************************/
 
 var canvas = document.getElementById('stage');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-
 paper.setup(canvas);
 
-DOOR_SIZE = 100;
-
-/* Doors */
-function Door(x,y) {
-	this.x = x;
-	this.y = y; 
-	this.size = DOOR_SIZE;
-	this.rectangle = new Rectangle(new Point(this.x, this.y), new Point(this.x+this.size,this.y+this.size));
-	var path = new Path.Rectangle(this.rectangle);
-	path.fillColor = '#e9e9ff';
-}
+/******************************************************************************/
+/* Graphical Elements : Ball
+/*****************************************************************************/
 
 var group = new Group;
 var ax,ay;
+var deviceMotion = [];
 
-deviceMotion = [];
-/* Ball */
 var BounceBall = Base.extend({
-
 	initialize: function() {
 		this.point = new Point(canvas.width/2,canvas.height/2);  // position
 		this.vpoint = new Point(0,0); // velocity
@@ -78,8 +67,6 @@ var BounceBall = Base.extend({
 		}
 	},
 	iterate: function() {
-
-		// Check Orientation
 		var landscape = window.innerWidth / window.innerHeight > 1;
 		//document.getElementById("ax").innerHTML = this.getDeviceMotion()[0];
 		//document.getElementById("ay").innerHTML = this.getDeviceMotion()[1];
@@ -96,21 +83,35 @@ var BounceBall = Base.extend({
 		
 		this.vpoint.x = this.vpoint.x * 0.98;
 		this.vpoint.y = this.vpoint.y * 0.98;
-		
 		this.item.position.y = this.item.position.y + this.vpoint.y / 50;
 		this.item.position.x = this.item.position.x + this.vpoint.x / 50;	
-		
-		console.debug("position y:",this.item.position.y);
-		console.debug("position x:",this.item.position.x);
 		
 		this.checkBounds();
 	} // end of iterate
 });
 
-function createDoor() {
+
+
+/******************************************************************************/
+/* Graphical Elements : DOORS
+/*****************************************************************************/
+
+DOOR_SIZE = 100;
+
+function Door(x,y) {
+	this.x = x;
+	this.y = y; 
+	this.size = DOOR_SIZE;
+	this.rectangle = new Rectangle(new Point(this.x, this.y), new Point(this.x+this.size,this.y+this.size));
+	var path = new Path.Rectangle(this.rectangle);
+	path.fillColor = '#e9e9ff';
+}
+
+function RandomDoor() {
+
 	var pos = ["T","R","B","L"];
-	randomPos = pos[Math.floor(Math.random()*pos.length)];
-	
+
+	randomPos = pos[Math.floor(Math.random()*pos.length)];	
 	switch(randomPos) {
 		case "T":
 	    	door = new Door(Math.floor(Math.random()*(canvas.width-DOOR_SIZE)),0);
@@ -127,27 +128,14 @@ function createDoor() {
 	}
 }
 
-/* Create Elements */
-
-ball = new BounceBall();
-
-createDoor();
-
-function onFrame() {
-	ball.iterate();
-	//console.debug(hitTest());
-}
 
 /******************************************************************************/
-/* Helpers
+/* Graphical Elements : ALL
 /*****************************************************************************/
 
-function hitTest() {
-	if (ball.item.hitTest(door.rectangle) == null) {
-		return false
-	} else {
-		return true
-	}
-	//console.debug(ball.item.hitTest(door.rectangle));
-}
+//ball = new BounceBall();
+//door = new RandomDoor();
 
+function onFrame() {
+	//ball.iterate();
+}
