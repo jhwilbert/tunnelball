@@ -12,8 +12,8 @@ function Door(x,y) {
 	this.x = x;
 	this.y = y; 
 	this.size = DOOR_SIZE;
-	var rectangle = new Rectangle(new Point(this.x, this.y), new Point(this.x+this.size,this.y+this.size));
-	var path = new Path.Rectangle(rectangle);
+	this.rectangle = new Rectangle(new Point(this.x, this.y), new Point(this.x+this.size,this.y+this.size));
+	var path = new Path.Rectangle(this.rectangle);
 	path.fillColor = '#e9e9ff';
 }
 
@@ -65,36 +65,46 @@ var BounceBall = Base.extend({
 	} // end of iterate
 
 });
-createDoor();
 
 function createDoor() {
-	var pos = ["T","R"];
+	var pos = ["T","R","B","L"];
 	randomPos = pos[Math.floor(Math.random()*pos.length)];
-	console.debug(randomPos);
- 	console.debug(canvas.width);		
 	
 	switch(randomPos) {
 		case "T":
-	    	door = new Door(Math.floor(Math.random()*canvas.width-DOOR_SIZE),0);
+	    	door = new Door(Math.floor(Math.random()*(canvas.width-DOOR_SIZE)),0);
 			break;
 		case "R":
-			door = new Door(0,Math.floor(Math.random()*canvas.height-DOOR_SIZE));
+			door = new Door(canvas.width-DOOR_SIZE,Math.floor(Math.random()*(canvas.height-DOOR_SIZE)));
 			break;
-/*		case "B":
-			door = new Door(Math.floor(Math.random()*canvas.width-DOOR_SIZE), canvas.height - DOOR_SIZE);
+		case "B":
+			door = new Door(Math.floor(Math.random()*(canvas.width-DOOR_SIZE)), canvas.height - DOOR_SIZE);
 			break;
-*/
-
+		case "L":
+			door = new Door(0,Math.floor(Math.random()*(canvas.width-DOOR_SIZE)));
+			break;
 	}
-
 }
+
+/* Create Elements */
+
+ball = new BounceBall(new Point(canvas.width/2,canvas.height/2),new Point(canvas.width/2,canvas.height/2));
+
+createDoor();
 
 function onFrame() {
 	ball.iterate();
+	hitTest();
 }
 
+/******************************************************************************/
+/* Helpers
+/*****************************************************************************/
 
+function hitTest() {
+	console.debug(ball.item.hitTest(door.rectangle));
+	//console.debug("Checking for hit");
+	//console.debug(door.rectangle.x);
+	//console.debug(ball.item.position);
+}
 
-
-ball = new BounceBall(Point.random(), Point.random());
-//door = new Door(50,500);
