@@ -1,10 +1,15 @@
 /******************************************************************************/
-/* Graphical Elements : paper.js
-/*****************************************************************************/
+/* 																			  */
+/* 																			  */
+/* 						Graphical Elements : paper.js						  */
+/* 																			  */
+/* 																			  */
+/******************************************************************************/
+
 
 var canvas = document.getElementById('stage');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = 500;
+canvas.height = 500;
 paper.setup(canvas);
 
 /******************************************************************************/
@@ -107,85 +112,27 @@ function Door(x,y) {
 	path.fillColor = '#e9e9ff';
 }
 
-function RandomDoor() {
-
-	var pos = ["T","R","B","L"];
-
-	randomPos = pos[Math.floor(Math.random()*pos.length)];	
-	switch(randomPos) {
-		case "T":
-	    	door = new Door(Math.floor(Math.random()*(canvas.width-DOOR_SIZE)),0);
-			break;
-		case "R":
-			door = new Door(canvas.width-DOOR_SIZE,Math.floor(Math.random()*(canvas.height-DOOR_SIZE)));
-			break;
-		case "B":
-			door = new Door(Math.floor(Math.random()*(canvas.width-DOOR_SIZE)), canvas.height - DOOR_SIZE);
-			break;
-		case "L":
-			door = new Door(0,Math.floor(Math.random()*(canvas.width-DOOR_SIZE)));
-			break;
-	}
-}
-
-
-/******************************************************************************/
-/* Graphical Elements : ALL
-/*****************************************************************************/
-
-//ball = new BounceBall();
-//door = new RandomDoor();
-
 function onFrame() {
 	//ball.iterate();
 }
 
 
 /******************************************************************************/
-/* Socket Controller
-/*****************************************************************************/
+/* 																			  */
+/* 																			  */
+/* 							Socket Controller								  */
+/* 																			  */
+/* 																			  */
+/******************************************************************************/
+
 
 var socket = io.connect('http://joaowilbert.local:8000');
 var my_id;
 var last_client;
+var doors = [];
 
-socket.on('handshake', function(data) {
-	my_id = data["client_id"];
-	total_clients = data["total_clients"]
-	updateStatus();
-});
-
-socket.on('update', function(data) {	
-	total_clients = data["total_clients"];
-	updateStatus();
+socket.on('create_door', function(data) {	
+	door = new Door(data.x, data.y);
 });
 
 
-function updateStatus() {
-	if(my_id == 0 &&  total_clients == 1) {
-		console.debug("I AM THE ONLY ONE");
-	} else if (my_id == 0 && total_clients > 1) {
-		console.debug("I AM THE FIRST ONE");
-		door = new RandomDoor();
-	} else if (my_id  == total_clients - 1) {
-		console.debug("I AM THE LAST  ONE");
-	} else if (my_id > 0 && my_id < total_clients - 1 ) {
-		console.debug("I AM THE MIDDLE");	
-	} 
-	
-	//console.debug("my id", my_id) 
-	//console.debug("total clients",total_clients);
-
-}
-
-
-/******************************************************************************/
-/* Helpers
-/*****************************************************************************/
-
-function getBoundaries() {
-	screenH = screen.height;
-	screenW = screen.width;
-	arr = [screenH,screenW];
-	return arr
-}
