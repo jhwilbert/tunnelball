@@ -6,8 +6,8 @@
 /*                                                                            */
 /******************************************************************************/
 var express = require('express');
-
 var app = express.createServer()
+
 var io = require('socket.io').listen(app);
 
 /*app.listen(process.env['app_port'] || 3000);*/
@@ -16,7 +16,6 @@ app.listen(8000);
 app.use("/js", express.static(__dirname + '/js'));
 app.use("/css", express.static(__dirname + '/css'));
 app.use("/imgs", express.static(__dirname + '/imgs'));
-
 
 app.get('/', function (req, res) {
 	res.sendfile(__dirname + '/index.html');
@@ -36,15 +35,6 @@ var Client = function(id,tunnel_x,tunnel_y,tunnel_pos,hasBall) {
 	this.hasBall = hasBall;
 	this.tunnel_pos = tunnel_pos;
 };
-
-// Methods
-Client.prototype.createDoor = function(x,y) {
-
-}
-
-Client.prototype.createBall = function(x,y) {
-
-}
 
 /******************************************************************************/
 /*  Connection Handles								                          */
@@ -85,12 +75,6 @@ io.sockets.on('connection', function (socket) {
 		// Event to interface
 		socket.emit("create_door", { x : fixedTunnel.x, y : fixedTunnel.y })
 		
-		console.log("----------------");
-		console.log(fixedTunnel.x);
-		console.log(fixedTunnel.y);
-		console.log(fixedTunnel.pos);
-		console.log("----------------");
-
 	}
 
 	// Handles Disconnection
