@@ -18,7 +18,7 @@ function detectedHit() {
 socket.on('create_tunnel', function(data) {
 	if(!hasTunnel) {
 		hasTunnel = true;
-		door = new Door(data.x, data.y);§
+		door = new Door(data.x, data.y);
 	}
 });
 
