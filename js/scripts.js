@@ -21,16 +21,14 @@ var ax,ay;
 var deviceMotion = [];
 
 var BounceBall = Base.extend({
-	initialize: function() {
-		this.point = new Point(canvas.width/2,canvas.height/2);  // position
+	initialize: function(x,y) {
+		this.point = new Point(x,y);  // position
 		this.vpoint = new Point(0,0); // velocity
-		this.apoint = new Point(0,0); // acceleration
-		
+		this.apoint = new Point(0,0); // acceleration	
  		this.gravity = 0.1;
 		this.bounce = -0.3;
 		this.radius = 30;
 		this.friction = 1.0;
-
 		this.createShape();
 		group.addChild(this.item);
 	}, // end of initialize
@@ -54,7 +52,6 @@ var BounceBall = Base.extend({
 	}, // end of createshape
 	
 	checkBounds: function() {
-		
 		if (this.item.position.x < this.radius) { // top
 			this.item.position.x = 0 + this.radius;
 			this.vpoint.x = - this.vpoint.x;
@@ -70,8 +67,20 @@ var BounceBall = Base.extend({
 		if (this.item.position.y > canvas.height - this.radius) {
 			this.vpoint.y = - this.vpoint.y;
 		}
-	},
+	}, // end of checkBounds
+	
+	checkHit: function() {
+		if(this.item.hitTest(door.rectangle) != undefined) {
+			this.item.visible = false;
+			// Fire socket event
+			if(tunnelEnabled == false) {
+				enableTunnel(this.item.position.x,this.item.position.y);
+			}
+		}
+	}, // end of checkHit
+		
 	iterate: function() {
+
 		var landscape = window.innerWidth / window.innerHeight > 1;
 		//document.getElementById("ax").innerHTML = this.getDeviceMotion()[0];
 		//document.getElementById("ay").innerHTML = this.getDeviceMotion()[1];
@@ -92,6 +101,7 @@ var BounceBall = Base.extend({
 		this.item.position.x = this.item.position.x + this.vpoint.x / 50;	
 		
 		this.checkBounds();
+		this.checkHit();
 	} // end of iterate
 });
 
@@ -113,8 +123,11 @@ function Door(x,y) {
 }
 
 function onFrame() {
-	//ball.iterate();
+	if(hasBall == true){
+		ball.iterate();
+	}
 }
+
 
 
 /******************************************************************************/
@@ -129,10 +142,19 @@ function onFrame() {
 var socket = io.connect('http://joaowilbert.local:8000');
 var my_id;
 var last_client;
-var doors = [];
+var hasBall;
+var tunnelEnabled = false;
 
-socket.on('create_door', function(data) {	
+function enableTunnel(ball_x,ball_y) {
+	socket.emit('enable_tunnel', { x : ball_x, y : ball_y });
+	tunnelEnabled = true;
+}
+socket.on('create_tunnel', function(data) {	
 	door = new Door(data.x, data.y);
 });
 
-
+socket.on('create_ball', function(data) {
+	console.debug("create ball event received");
+	ball = new BounceBall(10,10);
+	hasBall = true;
+});
