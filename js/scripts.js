@@ -128,8 +128,6 @@ function onFrame() {
 	}
 }
 
-
-
 /******************************************************************************/
 /* 																			  */
 /* 																			  */
@@ -146,15 +144,14 @@ var hasBall;
 var tunnelEnabled = false;
 
 function enableTunnel(ball_x,ball_y) {
-	socket.emit('enable_tunnel', { x : ball_x, y : ball_y });
+	socket.emit('tunnel_ball', { x : ball_x, y : ball_y });
 	tunnelEnabled = true;
 }
+
 socket.on('create_tunnel', function(data) {	
 	door = new Door(data.x, data.y);
 });
-
 socket.on('create_ball', function(data) {
-	console.debug("create ball event received");
 	ball = new BounceBall(10,10);
 	hasBall = true;
 });
