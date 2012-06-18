@@ -1,20 +1,49 @@
 /******************************************************************************/
 /* 																			  */
-/* 																			  */
-/* 						Graphical Elements : paper.js						  */
-/* 																			  */
+/* 							Socket Controller								  */
 /* 																			  */
 /******************************************************************************/
 
+var socket = io.connect('http://joaowilbert.local:8000');
+var hasBall = false;
+var hasTunnel = false;
+var ball;
+var tunnel;
+
+function detectedHit() {
+	console.debug("detected hit");
+	socket.emit('tunnel_ball', {});
+}
+
+socket.on('create_tunnel', function(data) {
+	if(!hasTunnel) {
+		hasTunnel = true;
+		door = new Door(data.x, data.y);§
+	}
+});
+
+socket.on('create_ball', function(data) {
+	if(!hasBall) {
+		ball = new BounceBall(10,10);
+		hasBall = true;
+	}
+});
+
+socket.on('destroy_ball', function(data) {
+	ball.destroy();
+	hasBall = false;
+});
+
+/******************************************************************************/
+/* 																			  */
+/* 						Graphical Elements : paper.js						  */
+/* 																			  */
+/******************************************************************************/
 
 var canvas = document.getElementById('stage');
 canvas.width = 500;
 canvas.height = 500;
 paper.setup(canvas);
-
-/******************************************************************************/
-/* Graphical Elements : Ball
-/*****************************************************************************/
 
 var group = new Group;
 var ax,ay;
@@ -71,21 +100,14 @@ var BounceBall = Base.extend({
 	
 	checkHit: function() {
 		if(this.item.hitTest(door.rectangle) != undefined) {
-			this.item.visible = false;
-			// Fire socket event
-			if(tunnelEnabled == false) {
-				enableTunnel(this.item.position.x,this.item.position.y);
-			}
+			//this.item.visible = false;	
+			detectedHit();
 		}
 	}, // end of checkHit
 		
 	iterate: function() {
 
 		var landscape = window.innerWidth / window.innerHeight > 1;
-		//document.getElementById("ax").innerHTML = this.getDeviceMotion()[0];
-		//document.getElementById("ay").innerHTML = this.getDeviceMotion()[1];
-		//document.getElementById("orient").innerHTML = landscape;
-		
 		this.apoint.x = this.getDeviceMotion()[0];
 		this.apoint.y = this.getDeviceMotion()[1];		
 
@@ -102,21 +124,21 @@ var BounceBall = Base.extend({
 		
 		this.checkBounds();
 		this.checkHit();
-	} // end of iterate
+
+	}, // end of iterate
+	destroy: function() {
+		this.item.remove();
+	}
 });
 
+/* Graphical Elements : DOORS */
 
-
-/******************************************************************************/
-/* Graphical Elements : DOORS
-/*****************************************************************************/
-
-DOOR_SIZE = 100;
+var door_size = 100;
 
 function Door(x,y) {
 	this.x = x;
 	this.y = y; 
-	this.size = DOOR_SIZE;
+	this.size = door_size;
 	this.rectangle = new Rectangle(new Point(this.x, this.y), new Point(this.x+this.size,this.y+this.size));
 	var path = new Path.Rectangle(this.rectangle);
 	path.fillColor = '#e9e9ff';
@@ -127,31 +149,3 @@ function onFrame() {
 		ball.iterate();
 	}
 }
-
-/******************************************************************************/
-/* 																			  */
-/* 																			  */
-/* 							Socket Controller								  */
-/* 																			  */
-/* 																			  */
-/******************************************************************************/
-
-
-var socket = io.connect('http://joaowilbert.local:8000');
-var my_id;
-var last_client;
-var hasBall;
-var tunnelEnabled = false;
-
-function enableTunnel(ball_x,ball_y) {
-	socket.emit('tunnel_ball', { x : ball_x, y : ball_y });
-	tunnelEnabled = true;
-}
-
-socket.on('create_tunnel', function(data) {	
-	door = new Door(data.x, data.y);
-});
-socket.on('create_ball', function(data) {
-	ball = new BounceBall(10,10);
-	hasBall = true;
-});

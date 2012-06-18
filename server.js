@@ -37,12 +37,10 @@ io.sockets.on('connection', function (socket) {
 		case 0:
 			console.log("----- GAME IS EMPTY WAITING FOR PLAYERS -----");
 			socket.join('game');
-			
 			io.sockets.socket(io.sockets.clients('game')[0]['id']).emit('create_tunnel', { x : tunnel.startx, y : tunnel.starty, pos : tunnel.startpos });
 			break;
 		case 1:
 			console.log("----- GAME HAS ONE PLAYER WE CAN START NOW -----");
-
 			socket.join('game');	
 			io.sockets.socket(io.sockets.clients('game')[0]['id']).emit('create_ball', { x : 10, y : 10 });	
 			io.sockets.socket(io.sockets.clients('game')[1]['id']).emit('create_tunnel', { x : tunnel.endx, y : tunnel.endy, pos : tunnel.endpos });
@@ -52,8 +50,9 @@ io.sockets.on('connection', function (socket) {
 			break;
 	}	
 	socket.on('tunnel_ball', function(data) {
-		console.log("BALL ENTERED TUNNEL");
-		io.sockets.socket(io.sockets.clients('game')[1]['id']).emit('create_ball', { x : 10, y : 10}); 
+		console.log("BALL ENTERED TUNNEL IN", socket.id);
+		io.sockets.socket(socket.id).emit('destroy_ball',{});
+		socket.broadcast.emit('create_ball', { x : 10, y : 10}); 
 	});
 	// Handles Disconnection
 	socket.on('disconnect', function() {
